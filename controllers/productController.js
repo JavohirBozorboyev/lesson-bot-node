@@ -110,9 +110,7 @@ export const getProductsByCategoryId = async (req, res, next) => {
     );
 
     if (!products || products.length === 0) {
-      return res
-        .status(404)
-        .json({ message: "No products found for this category" });
+      return res.status(404).json([]);
     }
 
     res.json(products);
