@@ -110,10 +110,10 @@ export const getProductsByCategoryId = async (req, res, next) => {
     );
 
     if (!products || products.length === 0) {
-      return res.status(404).json([]);
+      return res.status(200).json([]);
     }
 
-    res.json(products);
+    res.status(200).json(products);
   } catch (error) {
     next(error);
   }
