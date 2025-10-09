@@ -3,14 +3,22 @@ import Product from "../models/Product.js";
 // Create new product
 export const createProduct = async (req, res, next) => {
   try {
-    const { name, description, price, quantity, category } = req.body;
+    const { name, description, price, quantity, category, image } = req.body;
+
+    // Input validation
+    if (!name || !price || !category) {
+      return res
+        .status(400)
+        .json({ message: "Name, price, and category are required" });
+    }
 
     const product = await Product.create({
       name,
       description,
       price,
-      quantity,
+      quantity: quantity || 0,
       category,
+      image: image || "", // image maydonini URL sifatida qabul qiladi
     });
 
     res.status(201).json(product);
@@ -37,8 +45,7 @@ export const getProductById = async (req, res, next) => {
       "name"
     );
     if (!product) {
-      res.status(404);
-      throw new Error("Product not found");
+      return res.status(404).json({ message: "Product not found" });
     }
     res.json(product);
   } catch (error) {
@@ -51,11 +58,21 @@ export const updateProduct = async (req, res, next) => {
   try {
     const product = await Product.findById(req.params.id);
     if (!product) {
-      res.status(404);
-      throw new Error("Product not found");
+      return res.status(404).json({ message: "Product not found" });
     }
 
-    Object.assign(product, req.body);
+    const { name, description, price, quantity, category, image, isActive } =
+      req.body;
+
+    // Faqat kelgan maydonlarni yangilash
+    if (name !== undefined) product.name = name;
+    if (description !== undefined) product.description = description;
+    if (price !== undefined) product.price = price;
+    if (quantity !== undefined) product.quantity = quantity;
+    if (category !== undefined) product.category = category;
+    if (image !== undefined) product.image = image;
+    if (isActive !== undefined) product.isActive = isActive;
+
     await product.save();
     res.json(product);
   } catch (error) {
@@ -68,12 +85,37 @@ export const deleteProduct = async (req, res, next) => {
   try {
     const product = await Product.findById(req.params.id);
     if (!product) {
-      res.status(404);
-      throw new Error("Product not found");
+      return res.status(404).json({ message: "Product not found" });
     }
 
     await product.remove();
-    res.json({ message: "Product removed" });
+    res.json({ message: "Product removed successfully" });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Get products by category (using route param)
+export const getProductsByCategoryId = async (req, res, next) => {
+  try {
+    const { categoryId } = req.params;
+
+    if (!categoryId) {
+      return res.status(400).json({ message: "Category ID is required" });
+    }
+
+    const products = await Product.find({ category: categoryId }).populate(
+      "category",
+      "name"
+    );
+
+    if (!products || products.length === 0) {
+      return res
+        .status(404)
+        .json({ message: "No products found for this category" });
+    }
+
+    res.json(products);
   } catch (error) {
     next(error);
   }

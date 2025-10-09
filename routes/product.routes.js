@@ -5,6 +5,7 @@ import {
   getProductById,
   getProducts,
   updateProduct,
+  getProductsByCategoryId,
 } from "../controllers/productController.js";
 
 const router = express.Router();
@@ -41,6 +42,9 @@ const router = express.Router();
  *                   description:
  *                     type: string
  *                     example: "Sut hayvonlari uchun aralash yem"
+ *                   image:
+ *                     type: string
+ *                     example: "https://example.com/image.jpg"
  *                   category:
  *                     type: string
  *                     example: "Yem mahsulotlari"
@@ -55,6 +59,50 @@ const router = express.Router();
  *                     example: true
  */
 router.get("/", getProducts);
+
+/**
+ * @swagger
+ * /products/category/{categoryId}:
+ *   get:
+ *     summary: Category bo‘yicha mahsulotlarni olish
+ *     tags: [Product]
+ *     parameters:
+ *       - name: categoryId
+ *         in: path
+ *         required: true
+ *         description: Category ID
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Shu category ga tegishli mahsulotlar
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   _id:
+ *                     type: string
+ *                   name:
+ *                     type: string
+ *                   description:
+ *                     type: string
+ *                   image:
+ *                     type: string
+ *                   category:
+ *                     type: string
+ *                   price:
+ *                     type: number
+ *                   quantity:
+ *                     type: number
+ *                   isActive:
+ *                     type: boolean
+ *       404:
+ *         description: Shu category ga tegishli mahsulot topilmadi
+ */
+router.get("/category/:categoryId", getProductsByCategoryId);
 
 /**
  * @swagger
@@ -82,6 +130,8 @@ router.get("/", getProducts);
  *                 name:
  *                   type: string
  *                 description:
+ *                   type: string
+ *                 image:
  *                   type: string
  *                 category:
  *                   type: string
@@ -118,6 +168,9 @@ router.get("/", getProducts);
  *               description:
  *                 type: string
  *                 example: "Sut hayvonlari uchun yuqori sifatli yem"
+ *               image:
+ *                 type: string
+ *                 example: "https://example.com/product.jpg"
  *               category:
  *                 type: string
  *                 example: "671012ab3d6d2f54b1234c9f"
@@ -161,6 +214,9 @@ router.get("/", getProducts);
  *               description:
  *                 type: string
  *                 example: "Sut hayvonlari uchun maxsus aralashma"
+ *               image:
+ *                 type: string
+ *                 example: "https://example.com/new-product.jpg"
  *               price:
  *                 type: number
  *                 example: 21000
