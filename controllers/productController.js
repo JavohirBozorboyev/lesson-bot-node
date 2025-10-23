@@ -31,7 +31,7 @@ export const createProduct = async (req, res, next) => {
 export const getProducts = async (req, res, next) => {
   try {
     const products = await Product.find().populate("category", "name");
-    res.json(products);
+    res.status(200).json(products);
   } catch (error) {
     next(error);
   }
@@ -81,7 +81,7 @@ export const updateProduct = async (req, res, next) => {
 };
 
 // Delete product
-export const deleteProduct = async (req, res, next) => {
+export const deleteProduct = async (req, res) => {
   try {
     const product = await Product.findById(req.params.id);
 
@@ -93,7 +93,7 @@ export const deleteProduct = async (req, res, next) => {
 
     res.status(200).json({ message: "Mahsulot muvaffaqiyatli o'chirildi" });
   } catch (error) {
-    next(error);
+    console.log(error);
   }
 };
 
