@@ -84,12 +84,14 @@ export const updateProduct = async (req, res, next) => {
 export const deleteProduct = async (req, res, next) => {
   try {
     const product = await Product.findById(req.params.id);
+
     if (!product) {
-      return res.status(404).json({ message: "Product not found" });
+      return res.status(404).json({ message: "Mahsulot topilmadi" });
     }
 
-    await product.remove();
-    res.json({ message: "Product removed successfully" });
+    await Product.findByIdAndDelete(req.params.id);
+
+    res.status(200).json({ message: "Mahsulot muvaffaqiyatli o'chirildi" });
   } catch (error) {
     next(error);
   }
